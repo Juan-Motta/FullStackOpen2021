@@ -1,0 +1,44 @@
+title Traditional Page
+
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+Server-->Browser: HTML - Code
+
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+Server-->Browser: main.css
+
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+Server-->Browser: main.js
+
+
+note over Browser: Browser starts executing JS code that requests JSON data from server
+
+Browser -> Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+Server --> Browser: [{content: "hi", date: "2021-08-24T18:27:12.073Z"}...]
+
+note over Browser: Broser executes the event handler that renders notes to display
+
+note over Browser: Submit the user input
+
+Browser -> Server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note
+
+note over Server: Server recives HTTP request and sends a response
+
+Server --> Browser: Status code: 302
+
+note over Browser: New addres defined in headers
+
+Browser -> Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+
+Server-->Browser: HTML - Code
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+Server-->Browser: main.css
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+Server-->Browser: main.js
+
+
+note over Browser: Browser starts executing JS code that requests JSON data from server
+
+Browser -> Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+Server --> Browser: [{content: "hi", date: "2021-08-24T18:27:12.073Z"}...]
+
+note over Browser: Broser executes the event handler that renders notes to display
