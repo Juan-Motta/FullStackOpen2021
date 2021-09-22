@@ -20,7 +20,7 @@ const PersonFilter = ({ newName, newNumber, persons, setNewName, setNewNumber, s
     const isRepeated = (personObject, repeatedPerson) => {
         if (repeatedPerson.length === 0) {
             axios
-                .post('http://localhost:3001/api/persons', personObject)
+                .post('/api/persons', personObject)
                 .then(response => setNotificationMessage(`Added ${personObject.name}`, 'success'));
             setisAdded(true);
             setNewName('');
@@ -28,7 +28,7 @@ const PersonFilter = ({ newName, newNumber, persons, setNewName, setNewNumber, s
         } else {
             repeatedPerson[0] = { ...repeatedPerson[0], number: newNumber };
             axios
-                .put(`http://localhost:3001/api/persons/${repeatedPerson[0].id}`, repeatedPerson[0])
+                .put(`/api/persons/${repeatedPerson[0].id}`, repeatedPerson[0])
                 .then(response => setNotificationMessage(`Added ${repeatedPerson[0].name}`, 'success'));
             setisAdded(true);
             setNewName('');

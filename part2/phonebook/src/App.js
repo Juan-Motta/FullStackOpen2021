@@ -16,7 +16,7 @@ const App = () => {
     const [messageType, setMessageType] = useState('');
 
     const getDbData = () => {
-        axios.get('http://localhost:3001/api/persons')
+        axios.get('/api/persons')
             .then(response => {
                 setPersons(response.data)
             })
