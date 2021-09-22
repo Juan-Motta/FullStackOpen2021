@@ -1,4 +1,5 @@
 const express = require('express');
+const morgan = require('morgan');
 
 // INITIALIZATIONS
 
@@ -29,6 +30,19 @@ let persons = [
         "id": 4
     }
 ];
+
+//MIDDLEWARES
+
+app.use(morgan((tokens, req, res) => {
+    return [
+        tokens.method(req, res),
+        tokens.url(req, res),
+        tokens.status(req, res),
+        tokens.res(req, res, 'content-length'), '-',
+        tokens['response-time'](req, res), 'ms',
+        JSON.stringify(req.body)
+    ].join(' ')
+}));
 
 //ROUTES
 
