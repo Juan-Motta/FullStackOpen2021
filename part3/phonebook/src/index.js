@@ -1,12 +1,12 @@
 const express = require('express');
 const morgan = require('morgan');
+const cors = require('cors');
 
 // INITIALIZATIONS
 
 const app = express();
-app.use(express.json());
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 let persons = [
     {
@@ -32,6 +32,10 @@ let persons = [
 ];
 
 //MIDDLEWARES
+
+app.use(express.json());
+
+app.use(cors());
 
 app.use(morgan((tokens, req, res) => {
     return [
@@ -93,6 +97,32 @@ app.post('/api/persons', (req, res) => {
 
     } else {
         res.status(400).json({ message: "Name or number must be required" });
+    }
+});
+
+app.put('/api/persons/:id', (req, res) => {
+    const { name, number } = req.body;
+    const id = Number(req.params.id);
+    let [personObj] = persons.filter(p => p.id === id);
+    if (personObj) {
+        const newPersonsArray = persons.filter(p => p.id !== id);
+        if (name && number) {
+            personObj = { ...personObj, name, number };
+            persons = [...newPersonsArray, personObj];
+        } else if (name && !number) {
+            personObj = { ...personObj, name };
+            persons = [...newPersonsArray, personObj];
+
+        } else if (!name && number) {
+            personObj = { ...personObj, number };
+            persons = [...newPersonsArray, personObj];
+
+        } else {
+            res.status(400).json({ message: 'Name or number must be valid' });
+        }
+        res.status(200).json(personObj);
+    } else {
+        res.status(404).json({ message: 'Register not found' })
     }
 });
 

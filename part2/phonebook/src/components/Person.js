@@ -7,7 +7,7 @@ const Person = ({ name, number, id, setisAdded, setNotificationMessage }) => {
         const result = window.confirm(`Desea eliminar a ${name} - ${number}`);
         if (result) {
             axios
-                .delete(`http://localhost:3001/persons/${id}`)
+                .delete(`http://localhost:3001/api/persons/${id}`)
                 .then(response => {
                     setNotificationMessage(`${name} has already been removed from server`, 'error')
                     setisAdded(true)
