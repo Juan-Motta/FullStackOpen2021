@@ -44,7 +44,7 @@ const App = () => {
     }, [isAdded])
 
     const filteredPersons = persons.filter(person => (
-        person.name.toLowerCase().includes(filterName)
+        person.name.toLowerCase().includes(filterName.toLocaleLowerCase())
     ))
 
     return (

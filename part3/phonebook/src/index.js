@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
+const ObjectId = require('mongodb').ObjectId;
 
 const Person = require('./models/person');
 
@@ -10,32 +11,6 @@ const Person = require('./models/person');
 const app = express();
 
 const PORT = process.env.PORT || 3001;
-
-
-
-let persons = [
-    {
-        "name": "Arto Hellas",
-        "number": "040-123456",
-        "id": 1
-    },
-    {
-        "name": "Ada Lovelace",
-        "number": "39-44-5323523",
-        "id": 2
-    },
-    {
-        "name": "Dan Abramov",
-        "number": "12-43-234345",
-        "id": 3
-    },
-    {
-        "name": "Mary Poppendieck",
-        "number": "39-23-6423122",
-        "id": 4
-    }
-];
-
 
 //MIDDLEWARES
 
@@ -72,19 +47,28 @@ app.get('/api/info', (req, res) => {
 });
 
 app.get('/api/persons', (req, res) => {
-    Person.find({}).then(persons => {
-        res.json(persons);
-    });
+    Person.find({}, (err, persons) => {
+        if (err) {
+            res.status(500).json({ message: 'Server error' });
+        } else {
+            res.json(persons);
+        }
+    })
 });
 
 app.get('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id);
-    const person = persons.filter(p => p.id === id);
-    if (person.length === 1) {
-        res.status(200).json(person)
-    } else {
-        res.status(404).json({ message: 'Register not found' });
-    }
+    const id = req.params.id;
+    Person.findById(id, (err, person) => {
+        if (err) {
+            res.status(500).json({ message: 'Server error' });
+        } else {
+            if (person) {
+                res.json(person);
+            } else {
+                res.status(404).json({ message: 'Register not found' });
+            }
+        }
+    })
 });
 
 app.post('/api/persons', (req, res) => {
@@ -106,28 +90,30 @@ app.post('/api/persons', (req, res) => {
 
 app.put('/api/persons/:id', (req, res) => {
     const { name, number } = req.body;
-    const id = Number(req.params.id);
-    let [personObj] = persons.filter(p => p.id === id);
-    if (personObj) {
-        const newPersonsArray = persons.filter(p => p.id !== id);
-        if (name && number) {
-            personObj = { ...personObj, name, number };
-            persons = [...newPersonsArray, personObj];
-        } else if (name && !number) {
-            personObj = { ...personObj, name };
-            persons = [...newPersonsArray, personObj];
-
-        } else if (!name && number) {
-            personObj = { ...personObj, number };
-            persons = [...newPersonsArray, personObj];
-
-        } else {
-            res.status(400).json({ message: 'Name or number must be valid' });
-        }
-        res.status(200).json(personObj);
+    const id = req.params.id;
+    let personUpdated;
+    if (name && number) {
+        personUpdated = { name, number };
+    } else if (name && !number) {
+        personUpdated = { name };
+    } else if (!name && number) {
+        personUpdated = { number };
     } else {
-        res.status(404).json({ message: 'Register not found' })
+        res.status(400).json({ message: "Name or/and number must be required" });
     }
+
+    Person.findByIdAndUpdate(id, personUpdated, (err, person) => {
+        if (err) {
+            res.status(500).json({ message: 'Server error' });
+        } else {
+            if (person) {
+                res.json(person);
+            } else {
+                res.status(404).json({ message: 'Register not found' });
+            }
+        }
+    })
+
 });
 
 app.delete('/api/persons/:id', (req, res) => {
